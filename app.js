@@ -1,23 +1,22 @@
 let pagina =1;
-const btnAnterior = document.getElementById('btnAnterior');
-const btnSiguiente = document.getElementById('btnSiguiente');
+let peliculas='';
+let ultimaPelicula;
+//creamos el observador
+let observador = new IntersectionObserver((entradas, observador) => {
+	console.log(entradas);
 
-//cuando la variable-pagina es menor de 1000 entonces, suma 1 cada cuento
-btnSiguiente.addEventListener ('click', () => {
-    if (pagina < 1000){
-        pagina += 1;
-        cargarPeliculas();
-    }
-
+	entradas.forEach(entrada => {
+		if(entrada.isIntersecting){
+			pagina++;
+			cargarPeliculas();
+		}
+        // entradas recorrera cada entrada cuando se carga una pelicula,sumando cada 20 peliculas
+	});
+}, {
+	rootMargin: '0px 0px 200px 0px',
+	threshold: 1.0
 });
-//cuando la variable pagina sea mayor a 1000 entonces le resta el conteo.
-btnAnterior.addEventListener ('click', () => {
-    if (pagina > 1){
-        pagina -= 1;
-        cargarPeliculas();
-    }
 
-});
 
 const cargarPeliculas = async() =>{
     
@@ -31,7 +30,7 @@ const cargarPeliculas = async() =>{
              //acceder a los datos
              const datos= await respuesta.json();
             
-             let peliculas = ''; 
+            
              datos.results.forEach(pelicula => {
                 peliculas += `
                     <div class="pelicula">
@@ -44,6 +43,15 @@ const cargarPeliculas = async() =>{
              });
              document.getElementById('contenedor').innerHTML = peliculas;
 
+             if(pagina < 1000){
+				if(ultimaPelicula){
+					observador.unobserve(ultimaPelicula);
+				}
+	
+				const peliculasEnPantalla = document.querySelectorAll('.contenedor .pelicula');
+				ultimaPelicula = peliculasEnPantalla[peliculasEnPantalla.length - 1];
+				observador.observe(ultimaPelicula);
+			}
 
 
         }else if (respuesta.status === 401){
