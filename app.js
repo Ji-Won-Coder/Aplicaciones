@@ -51,7 +51,7 @@ const cargarPeliculas = async() =>{
         }else if(respuesta.status === 404){
             console.log('No se encontro la pelicula')
         }else{
-            console.log ('NO ENTENDER QUE')
+            console.log ('OH NO!!!! que sucedio?')
         }
 
 
